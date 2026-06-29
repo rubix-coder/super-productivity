@@ -39,6 +39,9 @@ const ea: ElectronAPI = {
     // NOTE: there is no proper way to unsubscribe apart from unsubscribing all
     ipcRenderer.on(channel, listener);
   },
+  send: (channel: string, ...args: unknown[]) => {
+    ipcRenderer.send(channel, ...args);
+  },
   // SYNC
   // ----
   getDistChannel: (): ElectronDistChannel | null => getDistChannel(),

@@ -22,6 +22,7 @@ export interface ElectronAPI {
     channel: string,
     listener: (event: IpcRendererEvent, ...args: unknown[]) => void,
   ): void;
+  send(channel: string, ...args: unknown[]): void;
 
   // SYNC
   // ----
