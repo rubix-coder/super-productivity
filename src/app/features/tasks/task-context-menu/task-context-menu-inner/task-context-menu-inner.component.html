@@ -312,6 +312,18 @@
   }
 
   <button
+    #stickyColorMenuTrigger="matMenuTrigger"
+    [matMenuTriggerFor]="stickyColorMenu"
+    mat-menu-item
+    [menuTouchFix]="stickyColorMenuTrigger"
+  >
+    <span class="menuItemLeft">
+      <mat-icon>sticky_note_2</mat-icon>
+      {{ 'Pin as sticky note' }}
+    </span>
+  </button>
+
+  <button
     (click)="deleteTask()"
     class="color-warn"
     mat-menu-item
@@ -423,5 +435,23 @@
       <mat-icon>add</mat-icon>
       {{ T.F.TAG.TTL.ADD_NEW_TAG | translate }}
     </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu
+  #stickyColorMenu="matMenu"
+  (closed)="focusRelatedTaskOrNext()"
+>
+  <ng-template matMenuContent>
+    @for (color of STICKY_NOTE_COLORS; track color) {
+      <button
+        (click)="pinAsSticky(color)"
+        mat-menu-item
+        menuTouchFix
+      >
+        <mat-icon [style.color]="color">circle</mat-icon>
+        <span [style.color]="color">{{ color }}</span>
+      </button>
+    }
   </ng-template>
 </mat-menu>

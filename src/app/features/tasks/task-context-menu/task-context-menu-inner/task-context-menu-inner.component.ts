@@ -73,6 +73,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TagService } from '../../../tag/tag.service';
 import { DialogPromptComponent } from '../../../../ui/dialog-prompt/dialog-prompt.component';
 import { TaskSharedActions } from '../../../../root-store/meta/task-shared.actions';
+import { StickyNotesActions } from '../../../sticky-notes/store/sticky-notes.actions';
 import { selectTodayTaskIds } from '../../../work-context/store/work-context.selectors';
 import { DateService } from '../../../../core/date/date.service';
 import { MenuTouchFixDirective } from '../menu-touch-fix.directive';
@@ -805,4 +806,24 @@ export class TaskContextMenuInnerComponent implements AfterViewInit, OnDestroy {
   }
 
   protected readonly ICAL_TYPE = ICAL_TYPE;
+  protected readonly STICKY_NOTE_COLORS = [
+    '#FFD93D',
+    '#FF6B6B',
+    '#4ECDC4',
+    '#95E1D3',
+    '#F38181',
+    '#AA96DA',
+    '#FCBAD3',
+    '#A8D8EA',
+  ];
+
+  pinAsSticky(color: string): void {
+    this._store.dispatch(
+      StickyNotesActions.pin({
+        taskId: this.task.id,
+        color,
+      }),
+    );
+    this.close.emit();
+  }
 }
