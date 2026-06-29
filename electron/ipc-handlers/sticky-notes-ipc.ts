@@ -10,8 +10,17 @@ export const setStickyNotesMainWindow = (win: BrowserWindow): void => {
   mainWindow = win;
 };
 
+export const getStickyWindowManager = (): StickyWindowManager | null => {
+  return stickyWindowManager || null;
+};
+
 export const initStickyNotesIpc = (manager: StickyWindowManager): void => {
   stickyWindowManager = manager;
+
+  // Handle show all notes request from tray menu
+  ipcMain.on('SHOW_ALL_STICKY_NOTES', () => {
+    stickyWindowManager.showAllWindows();
+  });
 
   // Renderer sends STICKY_SYNC with array of notes to sync window state
   ipcMain.on(IPC.STICKY_SYNC, (event, notes: StickyNoteData[]) => {

@@ -117,6 +117,15 @@ export class StickyWindowManager {
     this.windows.delete(taskId);
   }
 
+  showAllWindows(): void {
+    this.windows.forEach((win) => {
+      if (win && !win.isDestroyed()) {
+        win.show();
+        win.focus();
+      }
+    });
+  }
+
   private setupIpcHandlers(): void {
     // IPC handlers are now in ipc-handlers/sticky-notes-ipc.ts
   }

@@ -1,8 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>Sticky Note</title>
     <style>
       * {
@@ -12,7 +15,8 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
           Cantarell, sans-serif;
         padding: 12px;
         overflow: hidden;
@@ -98,7 +102,12 @@
         <button id="completeBtn">✓ Done</button>
         <button id="skipBtn">→ Skip</button>
         <button id="deleteBtn">✕ Del</button>
-        <button id="colorBtn" style="flex: 0.5">◉</button>
+        <button
+          id="colorBtn"
+          style="flex: 0.5"
+        >
+          ◉
+        </button>
       </div>
     </div>
 
@@ -125,12 +134,27 @@
           subTasksEl.innerHTML = note.subtasks
             .map(
               (sub) => `
-            <li class="subtask ${sub.isDone ? 'done' : ''}">
+            <li class="subtask ${sub.isDone ? 'done' : ''}" data-subtask-id="${sub.id}">
               ${sub.title}
             </li>
           `,
             )
             .join('');
+
+          // Add click listeners to subtasks
+          document.querySelectorAll('.subtask').forEach((el) => {
+            el.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const subId = el.getAttribute('data-subtask-id');
+              if (subId && currentNote && window.ea) {
+                window.ea.send('STICKY_ACTION', {
+                  taskId: currentNote.taskId,
+                  action: 'toggleSubtask',
+                  subtaskId: subId,
+                });
+              }
+            });
+          });
         } else {
           subTasksEl.innerHTML = '';
         }
@@ -141,7 +165,9 @@
         if (boundsChangeTimeout) clearTimeout(boundsChangeTimeout);
         boundsChangeTimeout = setTimeout(() => {
           if (currentNote && window.ea) {
-            const bounds = window.require('electron').ipcRenderer.sendSync('GET_WINDOW_BOUNDS');
+            const bounds = window
+              .require('electron')
+              .ipcRenderer.sendSync('GET_WINDOW_BOUNDS');
             if (bounds) {
               window.ea.send('STICKY_BOUNDS_CHANGED', {
                 taskId: currentNote.taskId,

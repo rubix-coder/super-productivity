@@ -82,6 +82,22 @@ export class StickyNotesEffects {
       case 'setBounds':
         this._store.dispatch(StickyNotesActions.setBounds({ taskId, bounds }));
         break;
+      case 'toggleSubtask':
+        // Toggle subtask done status
+        if (payload.subtaskId) {
+          this._store
+            .select((s) => selectTaskByIdWithSubTaskData(s, payload.subtaskId))
+            .subscribe((subtask) => {
+              if (subtask) {
+                this._store.dispatch(
+                  TaskSharedActions.updateTask({
+                    task: { id: payload.subtaskId, changes: { isDone: !subtask.isDone } },
+                  }),
+                );
+              }
+            });
+        }
+        break;
     }
   }
 }
