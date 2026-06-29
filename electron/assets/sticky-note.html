@@ -104,6 +104,8 @@
 
     <script>
       let currentNote = null;
+      let boundsChangeTimeout = null;
+      let lastBounds = null;
 
       window.ea.on('STICKY_NOTE_DATA', (event, note) => {
         currentNote = note;
@@ -115,14 +117,39 @@
         const titleEl = document.getElementById('noteTitle');
         const subTasksEl = document.getElementById('noteSubTasks');
 
-        // Set background color
         container.style.backgroundColor = note.color;
-
-        // Set title
         titleEl.textContent = note.title;
 
-        // Placeholder for subtasks (will be sent in next phase)
-        subTasksEl.innerHTML = '';
+        // Render subtasks
+        if (note.subtasks && note.subtasks.length > 0) {
+          subTasksEl.innerHTML = note.subtasks
+            .map(
+              (sub) => `
+            <li class="subtask ${sub.isDone ? 'done' : ''}">
+              ${sub.title}
+            </li>
+          `,
+            )
+            .join('');
+        } else {
+          subTasksEl.innerHTML = '';
+        }
+      }
+
+      // Debounced bounds change notification
+      function notifyBoundsChange() {
+        if (boundsChangeTimeout) clearTimeout(boundsChangeTimeout);
+        boundsChangeTimeout = setTimeout(() => {
+          if (currentNote && window.ea) {
+            const bounds = window.require('electron').ipcRenderer.sendSync('GET_WINDOW_BOUNDS');
+            if (bounds) {
+              window.ea.send('STICKY_BOUNDS_CHANGED', {
+                taskId: currentNote.taskId,
+                bounds,
+              });
+            }
+          }
+        }, 500);
       }
 
       document.getElementById('completeBtn').addEventListener('click', () => {
@@ -159,6 +186,11 @@
             action: 'showColorMenu',
           });
         }
+      });
+
+      // Listen for window move/resize events from Electron
+      window.ea.on('WINDOW_BOUNDS_CHANGED', () => {
+        notifyBoundsChange();
       });
     </script>
   </body>

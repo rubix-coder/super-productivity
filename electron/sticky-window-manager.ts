@@ -94,6 +94,14 @@ export class StickyWindowManager {
         win.webContents.send('STICKY_NOTE_DATA', note);
       });
 
+      win.on('move', () => {
+        win.webContents.send('WINDOW_BOUNDS_CHANGED');
+      });
+
+      win.on('resize', () => {
+        win.webContents.send('WINDOW_BOUNDS_CHANGED');
+      });
+
       win.on('closed', () => {
         this.windows.delete(note.taskId);
       });

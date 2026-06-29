@@ -107,6 +107,7 @@ import {
   reminderReducer,
 } from '../features/reminder/store/reminder.reducer';
 import { stickyNotesFeature } from '../features/sticky-notes/store/sticky-notes.reducer';
+import { StickyNotesEffects } from '../features/sticky-notes/store/sticky-notes.effects';
 
 @NgModule({
   declarations: [],
@@ -179,6 +180,7 @@ import { stickyNotesFeature } from '../features/sticky-notes/store/sticky-notes.
     StoreModule.forFeature(REMINDER_FEATURE_NAME, reminderReducer),
 
     StoreModule.forFeature(stickyNotesFeature),
+    EffectsModule.forFeature([StickyNotesEffects]),
 
     // EFFECTS ONLY
     EffectsModule.forFeature([
