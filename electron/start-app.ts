@@ -1,4 +1,5 @@
 import { initIpcInterfaces, setStickyWindowManager } from './ipc-handler';
+import { setStickyNotesMainWindow } from './ipc-handlers/sticky-notes-ipc';
 import { StickyWindowManager } from './sticky-window-manager';
 import { initPluginOAuth } from './plugin-oauth';
 import electronLog, { info, log, warn } from 'electron-log/main';
@@ -512,6 +513,7 @@ export const startApp = (): void => {
     });
 
     stickyWindowManager.setMainWindow(mainWin);
+    setStickyNotesMainWindow(mainWin);
     initPluginOAuth(mainWin);
 
     // Process any pending protocol URLs after window is created

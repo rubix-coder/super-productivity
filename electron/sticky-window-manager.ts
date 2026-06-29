@@ -1,7 +1,6 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 import { join } from 'path';
 import { log } from 'electron-log/main';
-import { IPC } from './shared-with-frontend/ipc-events.const';
 
 export interface StickyNoteData {
   taskId: string;
@@ -119,11 +118,6 @@ export class StickyWindowManager {
   }
 
   private setupIpcHandlers(): void {
-    // Emit STICKY_SYNC from renderer to sync window state
-    ipcMain.on(IPC.STICKY_ACTION, (event, payload: { taskId: string; action: string }) => {
-      if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-        this.mainWindow.webContents.send(IPC.STICKY_ACTION, payload);
-      }
-    });
+    // IPC handlers are now in ipc-handlers/sticky-notes-ipc.ts
   }
 }
