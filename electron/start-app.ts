@@ -1,4 +1,5 @@
-import { initIpcInterfaces } from './ipc-handler';
+import { initIpcInterfaces, setStickyWindowManager } from './ipc-handler';
+import { StickyWindowManager } from './sticky-window-manager';
 import { initPluginOAuth } from './plugin-oauth';
 import electronLog, { info, log, warn } from 'electron-log/main';
 import { App, app, BrowserWindow, globalShortcut, ipcMain, powerMonitor } from 'electron';
@@ -45,10 +46,15 @@ const appIN: App = app;
 
 let mainWin: BrowserWindow;
 let idleTimeHandler: IdleTimeHandler;
+let stickyWindowManager: StickyWindowManager;
 
 export const startApp = (): void => {
   // Initialize protocol handling (registers second-instance listener for URL forwarding)
   initializeProtocolHandling(IS_DEV, app, () => mainWin);
+
+  // Initialize sticky notes window manager before IPC
+  stickyWindowManager = new StickyWindowManager();
+  setStickyWindowManager(stickyWindowManager);
 
   // LOAD IPC STUFF
   initIpcInterfaces();
@@ -505,6 +511,7 @@ export const startApp = (): void => {
       customUrl,
     });
 
+    stickyWindowManager.setMainWindow(mainWin);
     initPluginOAuth(mainWin);
 
     // Process any pending protocol URLs after window is created

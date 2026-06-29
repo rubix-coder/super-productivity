@@ -10,6 +10,14 @@ import {
 } from './ipc-handlers';
 import { initClipboardImageHandlers } from './clipboard-image-handler';
 import { initLocalRestApi } from './local-rest-api';
+import { initStickyNotesIpc } from './ipc-handlers/sticky-notes-ipc';
+import { StickyWindowManager } from './sticky-window-manager';
+
+let stickyWindowManager: StickyWindowManager | null = null;
+
+export const setStickyWindowManager = (manager: StickyWindowManager): void => {
+  stickyWindowManager = manager;
+};
 
 export const initIpcInterfaces = (): void => {
   // Initialize plugin node executor (registers IPC handlers)
@@ -28,4 +36,7 @@ export const initIpcInterfaces = (): void => {
   initExecIpc();
   initClipboardImageHandlers();
   initLocalRestApi();
+  if (stickyWindowManager) {
+    initStickyNotesIpc(stickyWindowManager);
+  }
 };
